@@ -121,12 +121,6 @@ export class MatTableComponent implements OnInit {
     // See also the very instructive blog entry at
     // https://blog.angular-university.io/angular-debugging/
     // 
-    // TODO: Check this, after changing the swap-function !!!!!!##########################################
-    // The approach below hinders the error to occure, BUT: without
-    // keyboard interaction the data is NOT up to date, e.g. when
-    // doing drag and drop! Press button "[formGRoup.value to console]"
-    // to print the current value of this.formGroup.value to console to watch
-    // this effect.
     this.formGroup.valueChanges.pipe(
       // startWith: send starting "change", otherwise the info for you, developer, would 
       // only be shown below the table after interaction with the form fields in the table
@@ -245,7 +239,7 @@ export class MatTableComponent implements OnInit {
     const fa: FormArray = this.formGroup.get('tableData') as FormArray
     const dir = computedCurrentIndex > computedPreviousIndex ? 1 : -1;
     const moveMe = fa.at(computedPreviousIndex) as FormControl;
-    
+
     // as sequence usually plays a role, if you offer DnD, changing the sequence means
     // to have touched the dragged row as well as all moved rows.
     // so, let's mark them so here and inside the loop
