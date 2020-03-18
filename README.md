@@ -15,7 +15,7 @@ But what is the consequence if it comes all together in one all singing all danc
 * pagination
 * add/remove rows on user interaction
 
-This example contains a lot of comments in the code. The commtents address readers
+This example contains a lot of comments in the code. The comments address readers
 that are at the start of programming Angular. So, if your're already a pro, some of them
 might be unnecessary for you.
 
@@ -52,7 +52,7 @@ the handy method
 
     moveItemInArray(arrayData, previousIndex, currentIndex) // don't use in our case!
 
-what works fine for ashown but not editable array data. But we do not have an *array*, we do have a
+what works fine for shown but not editable array data. But we do not have an *array*, we do have a
 *FormArray*. So we implement the logic ourselfs. Additional to just swap the FormGroup objects inside
 the FormArray we also have to *touch* them and mark them *dirty* because apparently sequence of table rows 
 matters if we offer drag and drop.
@@ -64,20 +64,20 @@ And, additionally we have to calulate the real data index from the view data ind
 
 ### Erroneus behavoiour of Angular DnD when used with tables
 
-When the user drops an dragges table row, the function bound to \((cdkDropListDropped)\)
+When the user drops an dragged table row, the function bound to \(cdkDropListDropped)\
 is called. Inside the fired event we find the two properties:
 
 * event.currentIndex
 * event.previousIndex
 
-You can rely on the fact, that previousIndes tells you the receiving position of *view* row. But
+You can rely on the fact, that currentIndes tells you the receiving position of *view* row. But
 you *can not* rely on the rely on previousIndex. The Internet also knows this problem.
 
 The solution is to investigate on the old position on outselfs. We need two steps to achive this
 
-1. bind the real data to the visual element in teh HTML template  
+1. bind the real data of a row to the visual element in the HTML template  
    \[cdkDragData\]="row"
-2. find the real data object index inside the real data array from the row data object bound by \[cdkDragData\]  
+2. find the real data object index inside the real data array from the visual row data object bound by \[cdkDragData\]  
    const computedPreviousIndex = event.container.data.indexOf(event.item.data, 0);
 
 Here we compare the complete data object by indexOf(). Of course we also could have used the
@@ -90,7 +90,7 @@ Sorting goes nealy straight forward as in the examples of the original documenta
 we have to consider:
 
 * a sorted table shall disable drag and drop
-* as the row data is of type FormGroup and not a simple array we have to provide a
+* as the row data is of type FormGroup and not a simple JS object we have to provide a
   mechanism to access the value to be compared by the sorting algorithm
 
 In our case the latter can be realised simply by
@@ -110,7 +110,7 @@ use the propety 'dataIndex' like:
     <td *matCellDef="let data;let i = dataIndex" ...> ... </td>
 
 Just, it does not work, for whatever reason. So we have to calculate the real data row number
-on our. Simple enough.
+on ourselfs. Simple enough.
 
     viewRow2dataRow(viewRow: number): number {
         return this._paginator.pageSize * this._paginator.pageIndex + viewRow;
