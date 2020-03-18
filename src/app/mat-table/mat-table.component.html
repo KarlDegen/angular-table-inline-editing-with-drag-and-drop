@@ -3,18 +3,32 @@
         <mat-icon>
             add_circle_outline
         </mat-icon>
+    </button> 
+    <button style="margin: 0.5em 2em;" mat-raised-button (click)="doAction()">print formGroup to console
+        <mat-icon>
+            print
+        </mat-icon>
     </button>
     <div class="mat-elevation-z8 table-group" style="width: max-content; margin: 1em 2em;">
-        <table mat-table matSort [dataSource]="dataSource">
+        <mat-table matSort [dataSource]="dataSource" cdkDropList (cdkDropListDropped)="onDrop($event)"
+            [cdkDropListData]="dataSource.data" (matSortChange)="onSortChange($event)">
 
             <ng-container matColumnDef="drag">
-                <th mat-header-cell *matHeaderCellDef><mat-icon>drag_indicator</mat-icon></th>
-                <td mat-cell *matCellDef="let element;  let idx=index;"><mat-icon>drag_indicator</mat-icon></td>
+                <th mat-header-cell class="action" *matHeaderCellDef>
+                    <mat-icon>drag_indicator</mat-icon>
+                </th>
+                <td mat-cell class="action" *matCellDef="let element;  let idx=index;">
+                    <div cdkDragHandle style="cursor: ns-resize;" [ngClass]="{'drag-handle-disabled': sortActive}">
+                        <mat-icon>drag_indicator</mat-icon>
+                    </div>
+                </td>
             </ng-container>
 
-            <ng-container matColumnDef="index">
-                <th mat-header-cell *matHeaderCellDef>#</th>
-                <td mat-cell *matCellDef="let element;  let idx=index;">{{ viewRow2dataRow(idx)+1 }}</td>
+            <ng-container matColumnDef="id">
+                <th mat-header-cell mat-sort-header *matHeaderCellDef>ID</th>
+                <td mat-cell *matCellDef="let element;" [formGroup]="element">
+                        {{ element.get('id').value }}
+                </td>
             </ng-container>
 
             <ng-container matColumnDef="brand">
@@ -45,17 +59,20 @@
             </ng-container>
 
             <ng-container matColumnDef="actions">
-                <th mat-header-cell *matHeaderCellDef>Actions</th>
-                <td mat-cell *matCellDef="let element; let i = index;" [formGroup]="element">
-                    <mat-icon (click)="removeRow(i)">delete</mat-icon>
+                <th mat-header-cell class="action" *matHeaderCellDef>Actions</th>
+                <td mat-cell class="action" *matCellDef="let element; let i = index;" [formGroup]="element">
+                    <button mat-button (click)="removeRow(element.value.id)"><mat-icon>delete</mat-icon></button>
                 </td>
             </ng-container>
 
             <tr mat-header-row *matHeaderRowDef="displayColumns"></tr>
-            <tr mat-row *matRowDef="let row; columns: displayColumns;"></tr>
+            <!-- TAG_A35T6: [cdkDragData]="row" injects the row object itself (type here is FomrGroup) into the Angular <tr>-row -->
+            <!-- in the code we find this in a drop event at event.item.data -->
+            <!-- Search for the tag TAG_A35T6 in the component class to find the location-->
+            <tr mat-row cdkDrag [cdkDragData]="row" [cdkDragDisabled]="sortActive" *matRowDef="let row; columns: displayColumns;"></tr>
 
-        </table>
-        <mat-paginator [length]="formArray? formArray.length:0" [pageSizeOptions]="[5, 10, 20, 50, 100]" [pageSize]="5"
+        </mat-table>
+        <mat-paginator [length]="dataSource ? dataSource.data.length:0" [pageSizeOptions]="[5, 10, 20, 50, 100]" [pageSize]="5"
             showFirstLastButtons style="width: auto !important;">
         </mat-paginator>
     </div>
@@ -64,10 +81,31 @@
 
 <mat-accordion displayMode="default" [multi]="true" [hideToggle]="false">
     <mat-expansion-panel [hideToggle]="false">
-        <mat-expansion-panel-header>Developer Info</mat-expansion-panel-header>
-        <pre>formGroup.value = {{ formGroup.value | json }}</pre>
-        <mat-action-row>
-            <button mat-button (click)="onAction(event)">Action1</button>
-        </mat-action-row>
+        <mat-expansion-panel-header>
+            <mat-panel-title>Data Model</mat-panel-title>
+            <mat-panel-description>Model is immediately up to date as long as you
+                change data via keyboard entry. Drag and drop is not reflected in the shown data
+                until you change again data via keyboard.
+            </mat-panel-description>
+        </mat-expansion-panel-header>
+
+        <pre>formGroup.value (via dataString, see code) = {{ dataString }}</pre>
+    </mat-expansion-panel>
+</mat-accordion>
+
+<mat-accordion displayMode="default" [multi]="true" [hideToggle]="false">
+    <mat-expansion-panel [hideToggle]="false">
+        <mat-expansion-panel-header>
+            <mat-panel-title>Sorting</mat-panel-title>
+            <mat-panel-description>
+                Find the sorte state here. Because the "sortChange.subscribe(...)""
+                does not work (why ever!) the (matSortChange) event is bound to
+                a function onSortChange(...) to set this.sortActive. If the table 
+                is sorted, any drag and drop makes no sense and is disabled.
+            </mat-panel-description>
+        </mat-expansion-panel-header>
+        <pre>sort.active:  {{ _sort.active | json }} </pre>
+        <pre>sort.directioon:  {{ _sort.direction | json }} </pre>
+        <pre>this.sortActive:  {{ sortActive | json }} </pre>
     </mat-expansion-panel>
 </mat-accordion>
