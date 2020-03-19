@@ -91,20 +91,3 @@
         <pre>formGroup.value (via dataString, see code) = {{ dataString }}</pre>
     </mat-expansion-panel>
 </mat-accordion>
-
-<mat-accordion displayMode="default" [multi]="true" [hideToggle]="false">
-    <mat-expansion-panel [hideToggle]="false">
-        <mat-expansion-panel-header>
-            <mat-panel-title>Sorting</mat-panel-title>
-            <mat-panel-description>
-                Find the sorte state here. Because the "sortChange.subscribe(...)""
-                does not work (why ever!) the (matSortChange) event is bound to
-                a function onSortChange(...) to set this.sortActive. If the table 
-                is sorted, any drag and drop makes no sense and is disabled.
-            </mat-panel-description>
-        </mat-expansion-panel-header>
-        <pre>sort.active:  {{ _sort.active | json }} </pre>
-        <pre>sort.directioon:  {{ _sort.direction | json }} </pre>
-        <pre>this.sortActive:  {{ sortActive | json }} </pre>
-    </mat-expansion-panel>
-</mat-accordion>
