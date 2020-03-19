@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormArray, FormGroupName, FormControl } from '@angular/forms';
 import { IProduct } from './product';
 import { MatTableDataSource, MatTable } from '@angular/material';
@@ -74,12 +74,12 @@ export class MatTableComponent implements OnInit {
 
     /* This is the fishy part of the game: Material Table is meant to use it with 
        immutable data, not with a inline editing setting. BUT WE DO SO!
-
+  
       As a consequence we do two odd things here:
-
+  
       (1) Use a "FormArray of FormGroups" as "data array" instead of a plain array of 
           objects as we find it in so many examples for Material Table
-
+  
       (2) Tell Angualar at two locations, that the FormArray object carries the data
           (a) bind it to the <form> tag in html via the [formGroup] directive, but first
               (a.1) wrap it into a FormGroup.
@@ -87,13 +87,16 @@ export class MatTableComponent implements OnInit {
               directive, but first 
               (b.1) wrap it into a MatTableDataSource<T>
     */
-
+  
     let newFa: FormArray = this.arrayToFormGroupArray(DEMO_DATA); // this is (1)
     this.formGroup.setControl('tableData', newFa); // this is (2.a.1)
     this.dataSource = new MatTableDataSource(newFa.controls); // this is (2.b.1)
 
     // (2.a) and (2.b) still missing...well, they are carried out in the HTML template
     // search for "[dataSource]" and "[formGroup]" to finde the location.
+  }
+
+  ngAfterViewInit() {
 
     this.dataSource.paginator = this._paginator;
     this.dataSource.sort = this._sort;
